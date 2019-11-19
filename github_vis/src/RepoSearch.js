@@ -3,11 +3,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Checkbox from '@material-ui/core/Checkbox';
+// import Link from '@material-ui/core/Link';
+// import Grid from '@material-ui/core/Grid';
+// import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -38,8 +38,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
+
 export default function RepoSearch() {
   const classes = useStyles();
+  const [repo, setRepo] = React.useState('');
+  const handleChange = event => {
+    setRepo(event.target.value);
+  };
+
+  const doSomething = function(event) {
+    alert(repo);
+    event.preventDefault();
+  };
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -50,29 +62,20 @@ export default function RepoSearch() {
         <Typography component="h1" variant="h5">
           Enter Repository Name
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={doSomething}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="repository"
+            id="repository-inputs"
             label="Repository"
             name="repository"
+            className={classes.textField}
             autoComplete="repository"
+            onChange={handleChange}
             autoFocus
           />
-          {/* <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="github_user"
-            label="GitHub User"
-            type="github_user"
-            id="github_user"
-            autoComplete="github_user"
-          /> */}
           <Button
             type="submit"
             fullWidth
@@ -82,23 +85,8 @@ export default function RepoSearch() {
           >
             Search
           </Button>
-          {/* <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Link
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                Link
-              </Link>
-            </Grid>
-          </Grid> */}
         </form>
       </div>
-      <Box mt={8}>
-        {/* <Copyright /> */}
-      </Box>
     </Container>
   );
 }
