@@ -20,3 +20,19 @@
 .App-link {
   color: #09d3ac;
 }
+
+.navbar {
+  text-align: left;
+  font-weight: bold;
+  text-decoration-color: white;
+  padding: 20px;
+  background-color: #9D50BB;
+}
+
+.repoCard {
+  padding: 20px;
+}
+
+.card {
+  max-width: 375;
+}

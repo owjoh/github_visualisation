@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Logo from './desktop-icon.svg';
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -27,14 +28,20 @@ const useStyles = makeStyles(theme => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
-  submit: {
+  button: {
     margin: theme.spacing(3, 0, 2),
+    background: 'linear-gradient(45deg, #834d9b 30%,#d04ed6 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(208, 78, 214, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
   },
 }));
 
@@ -52,13 +59,13 @@ export default function RepoSearch() {
     event.preventDefault();
   };
 
+  
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-        </Avatar>
+        <img src={Logo} alt="Logo"/>
         <Typography component="h1" variant="h5">
           Enter Repository Name
         </Typography>
@@ -81,7 +88,7 @@ export default function RepoSearch() {
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            className={classes.button}
           >
             Search
           </Button>
