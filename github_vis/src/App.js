@@ -12,6 +12,9 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Logo from './desktop-icon.svg';
 import { makeStyles } from '@material-ui/core/styles';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+import { fontSize } from '@material-ui/system';
+
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -71,6 +74,7 @@ function App() {
     if(found === -1) {
       setData(data.items[0]);
     }
+
     else {
       setData(data.items[found])
     }
@@ -91,6 +95,9 @@ function App() {
       {RepoSearch([input, setInput])}
       <div className="repoCard" style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
         {MediaCard(name, owner, description, stars)}
+      </div>
+      <div className="barChart">
+        {testBar()}
       </div>
     </div>
   );
@@ -175,5 +182,41 @@ function RepoSearch([input, setInput]) {
       </div>
     </Container>
   );
+}
+
+
+function testBar() {
+  const data = [
+    {quarter: 1, earnings: 13000},
+    {quarter: 2, earnings: 16500},
+    {quarter: 3, earnings: 14250},
+    {quarter: 4, earnings: 19000}
+  ];
+  return (
+    <VictoryChart domainPadding={20} theme={VictoryTheme.material} >
+      <VictoryAxis
+        tickValues={[1,2,3,4]}
+        label={"Users"}
+        style={{
+          axisLabel: {fontSize: 5, padding: 30},
+          tickLabels: {fontSize: 5, },
+        }}
+      />
+      <VictoryAxis
+        dependentAxis
+        label={"Commits"}
+        style={{
+          axisLabel: {fontSize: 5, padding: 30},
+          tickLabels: {fontSize: 5, },
+        }}
+      />
+      <VictoryBar
+        data={data}
+        x="quarter"
+        y="earnings"
+      />
+    </VictoryChart>
+  );
+  
 }
 export default App;

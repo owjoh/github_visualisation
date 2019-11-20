@@ -7,3 +7,10 @@
 -Show number of comments for all collaborators in a repo
 -Show number of pull requests for all collaborators in a repo
 -Give a score for all three 
+-Plan to show this as a total number(lifetime commits etc.) or over the last year.
+
+Graphs to show it on
+-Spider graph combining commits, comments, etc...
+-barplot annimated showing totals
+-line chart for time period
+-maybe animated bar plot showing number commits over the lifetime of a project
