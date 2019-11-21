@@ -45,6 +45,40 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     height: 48,
     padding: '0 30px',
+    
+  },
+  card: {
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+    color: 'white',
+    width:'400px',
+    height:'400px',
+    
+  },
+  barCard: {
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+    color: 'white',
+  },
+
+  mediaCard: {
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+    color: 'white',
+    width:'400px',
+  },
+
+
+  searchCard: {
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+    color: 'white',
+    width:'400px',
+    height:'400px',
   },
 }));
 
@@ -102,14 +136,14 @@ function App() {
     var formatted = data;
     var currentAdditions;
     var currentDelections;
-    var currentCommits;
     var highestTotalAdd=0;
     var highestTotalDel=0;
-    var highestTotalCommits=formatted[formatted.length-1].total;
+    if(Array.isArray(formatted)){
+      var highestTotalCommits=formatted[formatted.length-1].total;
+    }
     for(let i =0; i < formatted.length; i++) {
       currentAdditions=0;
       currentDelections=0;
-      currentCommits=0;
       for(let j = 0; j < formatted[i].weeks.length; j++) {
         currentAdditions=currentAdditions+formatted[i].weeks[j].a;
         currentDelections=currentDelections+formatted[i].weeks[j].d;
@@ -131,24 +165,28 @@ function App() {
     setGraphData(formatted);
   }
 
-
+  const classes = useStyles();
   return (
     <div className="App">
       <div className='navbar'>
         <font color="white">GitHub Visualisation</font>
       </div>
-      {RepoSearch([input, setInput])}
+      <div className={classes.paper}>
+        <Card className={classes.searchCard}>
+          {RepoSearch([input, setInput])}
+        </Card>
+      </div>
       <Container>
       <div className="repoCard" style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
         {MediaCard(name, owner, description, stars)}
       </div>
       <div className="barChart">
-        <Card>
+        <Card className={classes.barCard}>
           {testBar(graphData,[radarData,setRadarData])}
         </Card>
       </div>
-      <div className="radar">
-        <Card>
+      <div >
+        <Card className={classes.card}>
           {RadarChart(radarData)}
         </Card>
       </div>
@@ -156,12 +194,17 @@ function App() {
     </div>
   );
 }
-
-
 function MediaCard(name, owner, description, stars) {
-
+  const classes = useStyles();
   return (
-    <Card className="card" style={{maxWidth: 400, minWidth: 400}}>
+    <Card style={{
+        maxWidth: 400,
+        minWidth: 400,
+        border: 0,
+        borderRadius: 10,
+        boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+      }}
+    >
       <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -238,15 +281,9 @@ function RepoSearch([input, setInput]) {
 }
 
 
-function testBar(data,[radarData,setRadarData]) {
-  // const data = [
-  //   {users: 1, commits: 13000, username: "owjoh"},
-  //   {users: 2, commits: 16500, username: "owjoh"},
-  //   {users: 3, commits: 14250, username: "owjoh"},
-  //   {users: 4, commits: 19000, username: "owjoh"}
-  // ];
-
-  if(!Array.isArray(data)) {
+function testBar(inData,[radarData,setRadarData]) {
+  
+  if(!Array.isArray(inData)) {
     return(<h3>Loading graph...</h3>);
   }
   else {
@@ -274,7 +311,7 @@ function testBar(data,[radarData,setRadarData]) {
           }}
         />
         <VictoryBar
-          data={data}
+          data={inData}
           x="author.login"
           y="total"
           style={{data:{fill: "#9D50BB"}}}
@@ -282,12 +319,12 @@ function testBar(data,[radarData,setRadarData]) {
             {
               target: "data",
               eventHandlers: {
-                onMouseOver: () => {
+                onMouseOver: (evt, props) => {
                   setRadarData([
-                    { x: 1, y: (720/1830)},
-                    { x: 2, y: (176710/288905)},
-                    { x: 3, y: (81543/237910)},
-                  ]);
+                    {y: ((inData[props.index].total)/(inData.highestTotalCom))},
+                    {y: ((inData[props.index].totalAdd)/(inData.highestTotalAdd))},
+                    {y: ((inData[props.index].totalDel)/(inData.highestTotalDel))},
+                  ])
                   return [
                     {
                       // Add an event to reset all the points to the original color
@@ -299,7 +336,7 @@ function testBar(data,[radarData,setRadarData]) {
                       // Then add an event to set changes. (eventKey will automatically use current target)
                       target: "data",
                       mutation: () => {
-                        return { style: { fill: "black", strokeWidth:-15 } };
+                        return { style: { fill: "#873ffb", strokeWidth:-15 } };
                       }
                     }
                   ];
@@ -314,11 +351,6 @@ function testBar(data,[radarData,setRadarData]) {
   }
 }
 
-function formatRadarData(data) {
-  var formatted;
-
-  return(formatted);
-}
 
 function RadarChart(data) {
   if(!Array.isArray(data)) {
@@ -328,16 +360,25 @@ function RadarChart(data) {
     <VictoryChart polar
       theme={VictoryTheme.material}
       maxDomain={{y:1}}
+      
     >
       <VictoryPolarAxis dependentAxis
         style={{ axis: { stroke: "none" } }}
-        tickFormat={(t) => null}
+        tickFormat={(t)=>null}
       />
-      <VictoryPolarAxis/>
+      <VictoryPolarAxis
+        labelPlacement="perpendicular"
+        tickCount={3}
+        tickFormat={["Additions","Deletions","Commits"]}
+      />
       <VictoryArea
         data={data}
         style={{
-        data: { fill: "#9D50BB", },
+        data: { fill: "#873ffb", fillOpacity: .7,strokeWidth:2, stroke: "#873ffb"},
+        }}
+        animate={{
+          duration: 500,
+          onLoad: { duration: 500}
         }}
       />
     </VictoryChart>
