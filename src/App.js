@@ -12,7 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Logo from './desktop-icon.svg';
 import { makeStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryArea, VictoryPolarAxis } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryArea, VictoryPolarAxis, VictoryLine } from 'victory';
 import { fontSize } from '@material-ui/system';
 import { classDeclaration } from '@babel/types';
 
@@ -99,9 +99,10 @@ function App() {
   const [description, setDescription] = React.useState('');
   const [owner, setOwner] = React.useState('');
   const [stars, setStars] = React.useState('');
-  const [input, setInput] = React.useState('github_visualisation');
+  const [input, setInput] = React.useState('flutter/cocoon');
   const [graphData, setGraphData] = React.useState('');
   const [radarData, setRadarData] = React.useState('');
+  const [lineData, setLineData] = React.useState('');
 
 
   useEffect( () => {
@@ -195,7 +196,7 @@ function App() {
         <div style={{flexDirection:'row'}}>
           <div className="barChart">
             <Card className={classes.barCard}>
-              {testBar(graphData,[radarData,setRadarData])}
+              {testBar(graphData,[radarData,setRadarData],[lineData,setLineData])}
             </Card>
           </div>
           <div style={{paddingBottom:20, display: 'flex',flexDirection: 'row',alignItems: 'center',}}>
@@ -204,7 +205,7 @@ function App() {
               </Card>
               <div style={{width:25}}></div>
               <Card className={classes.flexCard}>
-                {RadarChart(radarData)}
+                {LineChart(lineData)}
               </Card>
           </div>
         </div>
@@ -299,7 +300,7 @@ function RepoSearch([input, setInput]) {
 }
 
 
-function testBar(inData,[radarData,setRadarData]) {
+function testBar(inData,[radarData,setRadarData],[lineData,setLineData]) {
   
   if(!Array.isArray(inData)) {
     return(<h3>Loading graph...</h3>);
@@ -342,7 +343,8 @@ function testBar(inData,[radarData,setRadarData]) {
                     {y: ((inData[props.index].total)/(inData.highestTotalCom)), login:(inData[props.index].author.login)},
                     {y: ((inData[props.index].totalAdd)/(inData.highestTotalAdd))},
                     {y: ((inData[props.index].totalDel)/(inData.highestTotalDel))},
-                  ])
+                  ]);
+                  setLineData(inData[props.index]);
                   return [
                     {
                       // Add an event to reset all the points to the original color
@@ -369,12 +371,69 @@ function testBar(inData,[radarData,setRadarData]) {
   }
 }
 
+function LineChart(data) {
+  console.log(data.weeks);
+  if(!Array.isArray(data.weeks)) {
+    console.log("sake")
+    return(null);
+  }
+  else {
+    for(let i = 0; i < data.weeks.length; i++) {
+      data.weeks[i]["weekNo"] = i;
+    }
+  }
+  
+  return(
+    <Container>
+      <Container>
+        <VictoryChart
+          height={200}
+          width={300}
+          theme={VictoryTheme.material}
+          animate={{
+            duration: 300,
+            onLoad: { duration: 300}
+          }}
+        >
+          <VictoryLine
+            style={{
+              data: { stroke: "#873ffb" },
+              parent: { border: "1px solid #ccc"},
+
+            }}
+            data={data.weeks}
+            x="weekNo"
+            y="c"
+            tickFormat={data.weeks.length}
+          />
+          <VictoryAxis
+            dependentAxis
+            label={"Commits"}
+            style={{
+              axisLabel: {fontSize: 10, padding: 30},
+              tickLabels: {fontSize: 20*(1/2), angle: 0},
+            }}
+          />
+          <VictoryAxis
+            label={"Week"}
+            style={{
+              axisLabel: {fontSize: 10, padding: 30},
+              tickLabels: {fontSize: 20*(1/2), angle: 0},
+            }}
+            tickFormat={(t) => 'Day '+(t*7)}
+          />
+          
+        </VictoryChart>
+      </Container>
+    </Container>
+  );
+}
+
 
 function RadarChart(data) {
   if(!Array.isArray(data)) {
     return(null);
   }
-  console.log(data[0].login);
   return(
     <VictoryChart polar
       theme={VictoryTheme.material}
@@ -396,8 +455,8 @@ function RadarChart(data) {
         data: { fill: "#873ffb", fillOpacity: .7,strokeWidth:2, stroke: "#873ffb"},
         }}
         animate={{
-          duration: 500,
-          onLoad: { duration: 500}
+          duration: 300,
+          onLoad: { duration: 300}
         }}
       />
     </VictoryChart>
