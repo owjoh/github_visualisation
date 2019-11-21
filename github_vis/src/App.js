@@ -12,7 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Logo from './desktop-icon.svg';
 import { makeStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryArea, VictoryPolarAxis } from 'victory';
 import { fontSize } from '@material-ui/system';
 
 
@@ -55,6 +55,7 @@ function App() {
   const [stars, setStars] = React.useState('');
   const [input, setInput] = React.useState('flutter');
   const [graphData, setGraphData] = React.useState('');
+  const [radarData, setRadarData] = React.useState('');
 
 
   useEffect( () => {
@@ -109,7 +110,12 @@ function App() {
       </div>
       <div className="barChart">
         <Card>
-          {testBar(graphData)}
+          {testBar(graphData,[radarData,setRadarData])}
+        </Card>
+      </div>
+      <div className="radar">
+        <Card>
+          {RadarChart(radarData)}
         </Card>
       </div>
       </Container>
@@ -199,7 +205,7 @@ function RepoSearch([input, setInput]) {
 }
 
 
-function testBar(data) {
+function testBar(data,[radarData,setRadarData]) {
   // const data = [
   //   {users: 1, commits: 13000, username: "owjoh"},
   //   {users: 2, commits: 16500, username: "owjoh"},
@@ -218,7 +224,6 @@ function testBar(data) {
       }}>
         <VictoryAxis
           label={"Users"}
-          labelComponent={<VictoryTooltip/>}
           style={{
             axisLabel: {fontSize: 5, padding: 30},
             tickLabels: {fontSize: (5*(1/2)), angle: -90},
@@ -243,6 +248,11 @@ function testBar(data) {
               target: "data",
               eventHandlers: {
                 onMouseOver: () => {
+                  setRadarData([
+                    { x: 1, y: (1500/2000), labels:"commits"},
+                    { x: 2, y: (50/200), labels:"comments"},
+                    { x: 3, y: (20/100), labels:"pull"},
+                  ]);
                   return [
                     {
                       // Add an event to reset all the points to the original color
@@ -267,6 +277,33 @@ function testBar(data) {
       </VictoryChart>
     );
   }
-  
+}
+
+
+function RadarChart(data) {
+   const testdata=[
+    { x: 1, y: (1500/2000), labels:"commits"},
+    { x: 2, y: (50/200), labels:"comments"},
+    { x: 3, y: (20/100), labels:"pull"},
+  ];
+
+  return(
+    <VictoryChart polar
+      theme={VictoryTheme.material}
+    >
+      <VictoryPolarAxis dependentAxis
+        style={{ axis: { stroke: "none" } }}
+        tickFormat={(t) => null}
+      />
+      <VictoryPolarAxis/>
+      <VictoryArea
+        data={data}
+        style={{
+        data: { fill: "#9D50BB", },
+        }}
+      />
+    </VictoryChart>
+  );
+
 }
 export default App;
