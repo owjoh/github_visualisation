@@ -14,6 +14,7 @@ import Logo from './desktop-icon.svg';
 import { makeStyles } from '@material-ui/core/styles';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryArea, VictoryPolarAxis } from 'victory';
 import { fontSize } from '@material-ui/system';
+import { classDeclaration } from '@babel/types';
 
 
 const useStyles = makeStyles(theme => ({
@@ -54,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     width:'400px',
     height:'400px',
+    minWidth:'400px',
     
   },
   barCard: {
@@ -79,6 +81,16 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     width:'400px',
     height:'400px',
+  },
+
+  flexCard: {
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px rgba(0,0,0, .3)',
+    color: 'white',
+    width:'100%',
+    height:'400px',
+    
   },
 }));
 
@@ -177,19 +189,25 @@ function App() {
         </Card>
       </div>
       <Container>
-      <div className="repoCard" style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
-        {MediaCard(name, owner, description, stars)}
-      </div>
-      <div className="barChart">
-        <Card className={classes.barCard}>
-          {testBar(graphData,[radarData,setRadarData])}
-        </Card>
-      </div>
-      <div >
-        <Card className={classes.card}>
-          {RadarChart(radarData)}
-        </Card>
-      </div>
+        <div className="repoCard" style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
+          {MediaCard(name, owner, description, stars)}
+        </div>
+        <div style={{flexDirection:'row'}}>
+          <div className="barChart">
+            <Card className={classes.barCard}>
+              {testBar(graphData,[radarData,setRadarData])}
+            </Card>
+          </div>
+          <div style={{paddingBottom:20, display: 'flex',flexDirection: 'row',alignItems: 'center',}}>
+              <Card className={classes.card}>
+                {RadarChart(radarData)}
+              </Card>
+              <div style={{width:25}}></div>
+              <Card className={classes.flexCard}>
+                {RadarChart(radarData)}
+              </Card>
+          </div>
+        </div>
       </Container>
     </div>
   );
@@ -321,7 +339,7 @@ function testBar(inData,[radarData,setRadarData]) {
               eventHandlers: {
                 onMouseOver: (evt, props) => {
                   setRadarData([
-                    {y: ((inData[props.index].total)/(inData.highestTotalCom))},
+                    {y: ((inData[props.index].total)/(inData.highestTotalCom)), login:(inData[props.index].author.login)},
                     {y: ((inData[props.index].totalAdd)/(inData.highestTotalAdd))},
                     {y: ((inData[props.index].totalDel)/(inData.highestTotalDel))},
                   ])
@@ -356,6 +374,7 @@ function RadarChart(data) {
   if(!Array.isArray(data)) {
     return(null);
   }
+  console.log(data[0].login);
   return(
     <VictoryChart polar
       theme={VictoryTheme.material}
