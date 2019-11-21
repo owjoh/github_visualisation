@@ -251,7 +251,7 @@ function testBar(data,[radarData,setRadarData]) {
                   setRadarData([
                     { x: 1, y: (1500/2000), labels:"commits"},
                     { x: 2, y: (50/200), labels:"comments"},
-                    { x: 3, y: (20/100), labels:"pull"},
+                    { x: 3, y: (100/100), labels:"pull"},
                   ]);
                   return [
                     {
@@ -281,15 +281,10 @@ function testBar(data,[radarData,setRadarData]) {
 
 
 function RadarChart(data) {
-   const testdata=[
-    { x: 1, y: (1500/2000), labels:"commits"},
-    { x: 2, y: (50/200), labels:"comments"},
-    { x: 3, y: (20/100), labels:"pull"},
-  ];
-
   return(
     <VictoryChart polar
       theme={VictoryTheme.material}
+      
     >
       <VictoryPolarAxis dependentAxis
         style={{ axis: { stroke: "none" } }}
