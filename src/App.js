@@ -218,10 +218,12 @@ function testBar(data,[radarData,setRadarData]) {
   }
   else {
     return (
-      <VictoryChart domainPadding={20} theme={VictoryTheme.material} height={200} animate={{
+      <VictoryChart domainPadding={20} theme={VictoryTheme.material} height={200} 
+      animate={{
         duration: 1000,
         onLoad: { duration: 500}
-      }}>
+      }}
+      >
         <VictoryAxis
           label={"Users"}
           style={{
@@ -249,9 +251,9 @@ function testBar(data,[radarData,setRadarData]) {
               eventHandlers: {
                 onMouseOver: () => {
                   setRadarData([
-                    { x: 1, y: (1500/2000), labels:"commits"},
-                    { x: 2, y: (50/200), labels:"comments"},
-                    { x: 3, y: (100/100), labels:"pull"},
+                    { x: 1, y: (1500/2000)},
+                    { x: 2, y: (50/200)},
+                    { x: 3, y: (90/100)},
                   ]);
                   return [
                     {
@@ -279,12 +281,20 @@ function testBar(data,[radarData,setRadarData]) {
   }
 }
 
+function formatRadarData(data) {
+  var formatted;
+
+  return(formatted);
+}
 
 function RadarChart(data) {
+  if(!Array.isArray(data)) {
+    return(null);
+  }
   return(
     <VictoryChart polar
       theme={VictoryTheme.material}
-      
+      maxDomain={{y:1}}
     >
       <VictoryPolarAxis dependentAxis
         style={{ axis: { stroke: "none" } }}
