@@ -53,7 +53,7 @@ function App() {
   const [description, setDescription] = React.useState('');
   const [owner, setOwner] = React.useState('');
   const [stars, setStars] = React.useState('');
-  const [input, setInput] = React.useState('flutter');
+  const [input, setInput] = React.useState('github_visualisation');
   const [graphData, setGraphData] = React.useState('');
   const [radarData, setRadarData] = React.useState('');
 
@@ -93,8 +93,42 @@ function App() {
     fetch("https://api.github.com/repos/"+owner.login+"/"+name+"/stats/contributors")
     .then(res=>res.json())
     .then(gdata => (
-      setGraphData(gdata)
+      formatGraphData(gdata)
     ));
+  
+  }
+
+  const formatGraphData = (data)=> {
+    var formatted = data;
+    var currentAdditions;
+    var currentDelections;
+    var currentCommits;
+    var highestTotalAdd=0;
+    var highestTotalDel=0;
+    var highestTotalCommits=formatted[formatted.length-1].total;
+    for(let i =0; i < formatted.length; i++) {
+      currentAdditions=0;
+      currentDelections=0;
+      currentCommits=0;
+      for(let j = 0; j < formatted[i].weeks.length; j++) {
+        currentAdditions=currentAdditions+formatted[i].weeks[j].a;
+        currentDelections=currentDelections+formatted[i].weeks[j].d;
+      }
+      formatted[i]["totalAdd"] = currentAdditions;
+      formatted[i]["totalDel"] = currentDelections;
+      if(currentDelections>highestTotalDel){
+        highestTotalDel=currentDelections;
+      }
+      if(currentAdditions>highestTotalAdd){
+        highestTotalAdd=currentAdditions;
+      }
+
+    }
+    formatted["highestTotalCom"]=highestTotalCommits;
+    formatted["highestTotalAdd"]=highestTotalAdd;
+    formatted["highestTotalDel"]=highestTotalDel;
+    console.log(formatted);
+    setGraphData(formatted);
   }
 
 
@@ -122,7 +156,6 @@ function App() {
     </div>
   );
 }
-
 
 
 function MediaCard(name, owner, description, stars) {
@@ -214,7 +247,7 @@ function testBar(data,[radarData,setRadarData]) {
   // ];
 
   if(!Array.isArray(data)) {
-    return(null);
+    return(<h3>Loading graph...</h3>);
   }
   else {
     return (
@@ -251,9 +284,9 @@ function testBar(data,[radarData,setRadarData]) {
               eventHandlers: {
                 onMouseOver: () => {
                   setRadarData([
-                    { x: 1, y: (1500/2000)},
-                    { x: 2, y: (50/200)},
-                    { x: 3, y: (90/100)},
+                    { x: 1, y: (720/1830)},
+                    { x: 2, y: (176710/288905)},
+                    { x: 3, y: (81543/237910)},
                   ]);
                   return [
                     {
