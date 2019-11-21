@@ -12,7 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Logo from './desktop-icon.svg';
 import { makeStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryTooltip } from 'victory';
 import { fontSize } from '@material-ui/system';
 
 
@@ -54,6 +54,7 @@ function App() {
   const [owner, setOwner] = React.useState('');
   const [stars, setStars] = React.useState('');
   const [input, setInput] = React.useState('flutter');
+  const [graphData, setGraphData] = React.useState('');
 
 
   useEffect( () => {
@@ -66,6 +67,9 @@ function App() {
 
   const findInputInData = function(data, input) {
     let found = -1;
+    if(data.total_count===0) {
+      found = -2;
+    }
     for (let i = 0; i < data.items.length; i++) {
       if(input === data.items[i].name) {
         found = i;
@@ -74,8 +78,7 @@ function App() {
     if(found === -1) {
       setData(data.items[0]);
     }
-
-    else {
+    else if(found>-1){
       setData(data.items[found])
     }
   }
@@ -85,7 +88,14 @@ function App() {
     setOwner(owner.login)
     setDescription(description);
     setStars(stargazers_count);
+    console.log(owner.login + name);
+    fetch("https://api.github.com/repos/"+owner.login+"/"+name+"/stats/contributors")
+    .then(res=>res.json())
+    .then(gdata => (
+      setGraphData(gdata)
+    ));
   }
+
 
   return (
     <div className="App">
@@ -93,12 +103,16 @@ function App() {
         <font color="white">GitHub Visualisation</font>
       </div>
       {RepoSearch([input, setInput])}
+      <Container>
       <div className="repoCard" style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
         {MediaCard(name, owner, description, stars)}
       </div>
       <div className="barChart">
-        {testBar()}
+        <Card>
+          {testBar(graphData)}
+        </Card>
       </div>
+      </Container>
     </div>
   );
 }
@@ -185,38 +199,74 @@ function RepoSearch([input, setInput]) {
 }
 
 
-function testBar() {
-  const data = [
-    {quarter: 1, earnings: 13000},
-    {quarter: 2, earnings: 16500},
-    {quarter: 3, earnings: 14250},
-    {quarter: 4, earnings: 19000}
-  ];
-  return (
-    <VictoryChart domainPadding={20} theme={VictoryTheme.material} >
-      <VictoryAxis
-        tickValues={[1,2,3,4]}
-        label={"Users"}
-        style={{
-          axisLabel: {fontSize: 5, padding: 30},
-          tickLabels: {fontSize: 5, },
-        }}
-      />
-      <VictoryAxis
-        dependentAxis
-        label={"Commits"}
-        style={{
-          axisLabel: {fontSize: 5, padding: 30},
-          tickLabels: {fontSize: 5, },
-        }}
-      />
-      <VictoryBar
-        data={data}
-        x="quarter"
-        y="earnings"
-      />
-    </VictoryChart>
-  );
+function testBar(data) {
+  // const data = [
+  //   {users: 1, commits: 13000, username: "owjoh"},
+  //   {users: 2, commits: 16500, username: "owjoh"},
+  //   {users: 3, commits: 14250, username: "owjoh"},
+  //   {users: 4, commits: 19000, username: "owjoh"}
+  // ];
+
+  if(!Array.isArray(data)) {
+    return(null);
+  }
+  else {
+    return (
+      <VictoryChart domainPadding={20} theme={VictoryTheme.material} height={200} animate={{
+        duration: 1000,
+        onLoad: { duration: 500}
+      }}>
+        <VictoryAxis
+          label={"Users"}
+          labelComponent={<VictoryTooltip/>}
+          style={{
+            axisLabel: {fontSize: 5, padding: 30},
+            tickLabels: {fontSize: (5*(1/2)), angle: -90},
+            grid: {strokeWidth: 0}
+          }}
+        />
+        <VictoryAxis
+          dependentAxis
+          label={"Commits"}
+          style={{
+            axisLabel: {fontSize: 5, padding: 30},
+            tickLabels: {fontSize: 5, },
+          }}
+        />
+        <VictoryBar
+          data={data}
+          x="author.login"
+          y="total"
+          style={{data:{fill: "#9D50BB"}}}
+          events={[
+            {
+              target: "data",
+              eventHandlers: {
+                onMouseOver: () => {
+                  return [
+                    {
+                      // Add an event to reset all the points to the original color
+                      target: "data",
+                      eventKey: "all",
+                      mutation: () => ({ style: { fill: "#9D50BB", strokeWidth:-5} })
+                    },
+                    {
+                      // Then add an event to set changes. (eventKey will automatically use current target)
+                      target: "data",
+                      mutation: () => {
+                        return { style: { fill: "black", strokeWidth:-15 } };
+                      }
+                    }
+                  ];
+                }
+              }
+            }
+          ]}
+          
+        />
+      </VictoryChart>
+    );
+  }
   
 }
 export default App;
