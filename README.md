@@ -1,4 +1,18 @@
 ### Flutter GitHub Repo Visualisation
+
+Enter into the search bar the name of a repository, to get an exact repository enter "<github_username>/<github_name>"
+
+Hover over the bars in the bar chart to populate the graphs below with the data of the current bar you've selected.
+
+
+
+
+
+
+
+
+PLAN
+=====================================================================
 -Graph all contributers in the number of commits
 -Compare number of commits to lines of code added/removed
 -Show number of commits etc each week.
