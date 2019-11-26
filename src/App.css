@@ -30,6 +30,11 @@
   
 }
 
+.graphLabel {
+  color: #282c34;
+  font-weight: bold;
+}
+
 .repoCard {
   padding: 20px;
 }

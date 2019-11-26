@@ -201,6 +201,7 @@ function App() {
           </div>
           <div style={{paddingBottom:20, display: 'flex',flexDirection: 'row',alignItems: 'center',}}>
               <Card className={classes.card}>
+                {RadarLabel(radarData)}
                 {RadarChart(radarData)}
               </Card>
               <div style={{width:25}}></div>
@@ -369,6 +370,17 @@ function testBar(inData,[radarData,setRadarData],[lineData,setLineData]) {
       </VictoryChart>
     );
   }
+}
+
+function RadarLabel(data) {
+  if(!Array.isArray(data)) {
+    return(null);
+  }
+  return(
+    <div className="graphLabel">
+      {data[0].login}
+    </div>
+  )
 }
 
 function LineChart(data) {
