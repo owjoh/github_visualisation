@@ -196,6 +196,7 @@ function App() {
         <div style={{flexDirection:'row'}}>
           <div className="barChart">
             <Card className={classes.barCard}>
+              <div className="barChartLabel">Hover over bars for more information</div>
               {testBar(graphData,[radarData,setRadarData],[lineData,setLineData])}
             </Card>
           </div>

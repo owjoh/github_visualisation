@@ -35,6 +35,10 @@
   font-weight: bold;
 }
 
+.barChartLabel {
+  color: dimgrey;
+}
+
 .repoCard {
   padding: 20px;
 }
